@@ -1,0 +1,22 @@
+---
+- hosts: webserver
+  gather_facts: no
+  
+  roles: 
+    - role: common 
+    - role: nginx
+      vars:
+        dir: /opt/a
+        app_port: 80
+      tags: nginx
+    - role: php
+      vars:
+        dir: /opt/b
+        app_port: 81
+      tags: php
+
+#  roles:
+#    - common
+#    - nginx
+#    - php
+

@@ -1,0 +1,18 @@
+#注册变量register
+---
+- hosts: webserver
+  gather_facts: no
+  remote_user: root
+  vars: 
+    - work_dir: /usr/local
+    - nginx_version: 1.16
+  
+  tasks:
+  - name: register	var
+    command: data +"%F_%T"
+	register: datatime
+	
+  - name: touch file
+    #debug: msg={{datatime}} 
+    file: dest=/tmp/r_{{datatime.stdout}} state=touch
+	

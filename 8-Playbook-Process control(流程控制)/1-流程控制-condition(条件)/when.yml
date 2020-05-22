@@ -1,0 +1,9 @@
+---
+#获取主机ip，如果是192.168.0.133就打印本机ip
+- hosts: webserver
+  gather_facts: yes
+ 
+  tasks:
+  - name: "IP if"
+    debug: msg={{ansible_default_ipv4.address}}
+    when: ansible_default_ipv4.address == '192.168.0.133'

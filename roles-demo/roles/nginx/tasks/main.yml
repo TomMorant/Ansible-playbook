@@ -1,0 +1,2 @@
+- name: nginx task test
+  debug: msg="nginx task test -> {{dir}} - {{app_port}} - {{nginx_version}}"

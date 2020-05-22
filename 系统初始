@@ -1,0 +1,64 @@
+- name: centos6.x优化-copy base.repo
+  copy: src={{ item.src }} dest={{ item.dest }} force=yes owner=root group=root mode=644
+  with_items:
+     - {src: "/etc/yum.repos.d/epel.repo",dest: "/etc/yum.repos.d/epel.repo"}
+     - {src: "/etc/yum.repos.d/CentOS-Base.repo",dest: "/etc/yum.repos.d/CentOS-Base.repo"}
+- name: 安装基础软件
+  yum: name={{ item }} state=present 
+  with_items:
+     - gcc
+     - gcc-c++
+     - wget
+     - lrzsz
+     - curl
+     - nmap
+     - telnet
+     - iotop
+     - vim
+     - ntsysv
+     - unzip
+     - sysstat
+     - ntp
+- name: 关闭不需要的服务  
+  shell: chkconfig --list|grep '3:on'|egrep -v 'crond|network|sshd|rsyslog'|awk '{print "chkconfig "$1 " off"}'| bash
+- name: 关闭不需要的TTY
+  shell: sed -i '/ACTIVE_CONSOLES/s/1-6/1-2/g' /etc/init/start-ttys.conf
+- name: ntp同步
+  cron: name="ntpdate" minute="10" job="/usr/sbin/ntpdate 1.cn.pool.ntp.org"
+- name: 编辑时间配置文件确保时区为CST
+  copy: src="/etc/sysconfig/clock" dest="/etc/sysconfig/clock"
+- name: 连接时区文件
+  file: src="/usr/share/zoneinfo/Asia/Shanghai" dest="/etc/localtime" state=link force=yes
+- name: 修改limits.conf1
+  shell: grep "* soft nofile 65535" /etc/security/limits.conf || echo '* soft nofile 65535' >>/etc/security/limits.conf
+- name: 修改limits.conf2
+  shell: grep "* hard nofile 65535" /etc/security/limits.conf || echo '* hard nofile 65535' >>/etc/security/limits.conf
+- name: 修改文件最大句柄数
+  shell: ulimit -SHn 65535
+- name: 追加到启动文件
+  shell: grep "ulimit -SHn 65535" /etc/rc.local || echo "ulimit -SHn 65535" >> /etc/rc.local
+- name: disabled selinux
+  shell: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+- name: getenforce
+  command: setenforce 0
+  ignore_errors: yes
+- name: disabled iptables
+  command: chkconfig iptables off
+- name: no service iptables
+  service: name=iptables state=stopped
+- name: 修改hosts
+  copy: src="/etc/hosts" dest="/etc/hosts"
+- name: 修改主机名
+  shell: hostname=`ip addr |grep "global eth0"|awk -F '[/ ]+' '{print $3}' |xargs -i grep {} /etc/hosts |awk '{print $2}'`;grep $hostname /etc/sysconfig/network || sed -i 's/^HOSTNAME=.*/HOSTNAME='$hostname'/' /etc/sysconfig/network
+- name: 优化内核参数
+  copy: src="sysctl.config" dest="/tmp/sysctl.config" 
+- name: 同步sysctl.conf
+  shell: grep -vE "#|^$" /etc/sysctl.conf > /tmp/sysctl.log;diff -w /tmp/sysctl.log /tmp/sysctl.config |sed -n '/---/,+100p'|sed '1d' |awk '{print $2" "$3" "$4" "$5}'|xargs -i echo {} >> /etc/sysctl.conf;rm -rf /tmp/sysctl.config
+- name: 创建devel账号 (可以使用:openssl passwd -salt -1 "password" 生产密码 添加password选项)
+  user: name=devel home=/home/devel uid=888 shell=/bin/bash 
+- name: 修改密码
+  shell: echo "xddd@2018" | passwd --stdin devel
+- name: 创建拥有root权限的账号
+  user: name=sysadmin uid=999 home=/home/sysadmin shell=/bin/bash
+- name: 修改sysadmin 密码
+  shell: echo "xddd@2018" | passwd --stdin sysadmin

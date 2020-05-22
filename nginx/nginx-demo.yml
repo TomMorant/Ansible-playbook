@@ -1,0 +1,42 @@
+---
+- host: webserver
+  gather_facts: no
+  
+  vars:
+    hello: Ansible
+
+  tasks: 
+  - name: ADD
+    yum_repository: 
+	  name: nginx 
+	  description: nginx repo
+	  baseurl: http:nginx.org/packages/centos/7/$basearch/
+	  gpgcheck: no
+	  enabled: 1
+    tags: addrepo    
+  - name: Install nginx
+    yum: 
+	  name: nginx
+	  state: latest
+    tags: 
+ #多个标签为序列，如下  
+      - install
+      - install2
+ # ansible-playbook nginx-demo.yml --tags "install"及 ansible-playbook nginx-demo.ym --skip-tags "--skip-tags"
+  - name: Copy nginx  configuration file
+    copy: 
+	  src: ./site.conf
+	  dest: /etc/nginx/conf.d/site.conf
+  - name: Start nginx
+    service: 
+	  name: nginx
+	  state: started
+  - name: Create wwwroot directory
+    file:
+	  dest: /var/www/html
+	  state: directory
+  - name: Create test page index.html
+    #debug: msg="123 {{hell}}"
+    debug: msg="123 {{group_names}}"
+    #shell: echo "hello {{hello}}" > /var/www/html
+    tags: debug

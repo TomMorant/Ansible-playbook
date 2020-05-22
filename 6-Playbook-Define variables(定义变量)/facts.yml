@@ -1,0 +1,13 @@
+#系统信息变量
+---
+- hosts: webserver
+  gather_facts: no
+  remote_user: root
+  vars: 
+    - work_dir: /usr/local
+    - nginx_version: 1.16
+  
+  tasks:	
+  - name: touch file
+    #debug: msg={{datatime}} 
+    file: dest=/tmp/r_{{ansible_hostname}} state=touch

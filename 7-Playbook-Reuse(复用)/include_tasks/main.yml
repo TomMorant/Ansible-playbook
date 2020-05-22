@@ -1,0 +1,7 @@
+---
+- hosts: webserver
+  gather_facts: no
+  
+  tasks:
+  - include_task: task1.yml
+  - include_task: task2.yml

@@ -1,0 +1,4 @@
+---
+- name: include_task task2
+  debug: msg="task2"
+  

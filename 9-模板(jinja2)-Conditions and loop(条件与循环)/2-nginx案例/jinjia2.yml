@@ -1,0 +1,13 @@
+---
+- hosts: webserver
+  gather_facts: no
+  vars:
+     http_prot: 80
+     server_name: test.com
+  tasks:
+    - name: Cpyt nginx config file
+      templates: src=site.j2 dest=/etc/nginx/conf.d/site.conf
+      notify: reload nginx 
+  handlers:
+    - name: reload nginx 
+      service: name=nginx state=reloaded    

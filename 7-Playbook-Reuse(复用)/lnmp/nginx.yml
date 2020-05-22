@@ -1,0 +1,7 @@
+---
+- hosts: webserver
+  gather_facts: no
+  
+  tasks:
+  - name: Install nginx
+    debug: msg="install nginx ..."

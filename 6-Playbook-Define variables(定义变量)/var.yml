@@ -1,0 +1,15 @@
+#定义变量
+---
+- hosts: webserver
+  gather_facts: no
+  remote_user: root
+  vars: 
+    - work_dir: /usr/local
+    - nginx_version: 1.16
+  
+  tasks:
+  - name: Install nginx
+    debug: msg="{{work_dir}}/nginx{{nginx_version}}"
+    #debug: msg="{{work_dir}}"
+	
+	#ansible-playbook var.yml -e work_dir=/usr/local/

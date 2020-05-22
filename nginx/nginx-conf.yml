@@ -1,0 +1,17 @@
+---
+- hosts: webserver
+  gather_facts: no
+  remote_user: root
+  
+  tasks:
+  - name: Copy nginx.conf 
+    copy:
+	  src: site.conf
+	  dest: /ets/nginx/conf.d
+      notify: 
+        - reload nginx   #通知reload，如果没有执行就不进行通知
+      
+  handlers:  #配置有改变就进行reload
+  - name: reload nginx/conf
+    service: name=nginx state: reloaded
+	

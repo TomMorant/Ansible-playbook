@@ -1,0 +1,10 @@
+---
+- name: Download Wordpress
+  get_url: url=https://cn.wrodpress.org/wordpress-{{ wp_version }}-zh_CN.tar.gz dest=/tmp/wordpress-{{ wp_version }}-zh_CN.tar.gz
+  #copy: src=wordpress-{{ wp_version }}.tar.gz dest=/tmp
+  
+- name: Extrat archive
+  unarchive: src=//tmp/wordpress-{{ wp_version }}-zh_CN.tar.gz dest=/usr/local/nginx/html copy=no
+
+- name: Chang ownership of wordpress installtion
+  file: path=/usr/local/nginx/html/wordpress owner=nobody group=nobody  state=directory recurse=yes

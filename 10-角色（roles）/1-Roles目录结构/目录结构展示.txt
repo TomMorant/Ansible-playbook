@@ -1,0 +1,19 @@
+
+site.yml
+webserver.yml
+fooservers.yml
+roles/
+	common/
+		files/
+		templates/
+		tasks/
+		handlers/
+		vars/
+		defaults/
+		meta/
+	webservers/
+		files/
+		templates/
+		tasks/
+		handlers/
+		vars/

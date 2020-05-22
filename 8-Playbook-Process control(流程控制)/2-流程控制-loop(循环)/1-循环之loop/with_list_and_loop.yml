@@ -1,0 +1,26 @@
+#从with过渡到loop循环
+#循环序列
+---
+- hosts: webserver
+  gather_facts: no
+  tasks:
+  
+    - name: with_list
+	  debug: msg="{{item}}"
+      with_list:
+        - one
+        - two
+        
+    - name: with_list --> loop 
+      debug:
+        msg: "{{item}}"
+      loop:
+        - one
+        - two
+    
+    - name: with_list --> loop 
+      user: name={{item}} state=present
+      loop:
+        - wangwu
+        - zhaoliu
+      tags: add1

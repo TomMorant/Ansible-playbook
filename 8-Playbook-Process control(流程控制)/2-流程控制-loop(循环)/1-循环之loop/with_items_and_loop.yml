@@ -1,0 +1,23 @@
+#with_items与loop循环
+---
+- hosts: webserver
+  gather_facts: no
+  tasks:
+  
+    - name: with_items
+      debug:
+        msg: "{{item}}"
+      with_items: "{{items}}"
+    
+    - name: with_items --> loop
+      debug:
+        msg: "{{item}}"
+      loop: "{{items|flatten(levels=1)}}"
+    
+    #循环字典    
+    - name: with_items
+      debug: msg: "{{item}}"
+      user: name={{item.name}} groups={{item.groups}} state=present
+      with_items:
+         - {name: 'zhangsan', groups: 'www'}
+         - {name: 'lisi', groups: 'www'}

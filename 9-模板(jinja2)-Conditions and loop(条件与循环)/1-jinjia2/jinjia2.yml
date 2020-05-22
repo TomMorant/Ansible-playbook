@@ -1,0 +1,8 @@
+---
+- hosts: webserver
+  gather_facts: no
+  vars:
+      hello: ansible
+  tasks:
+     - templates: src=f.j2 dest=/tmp/j2
+	 
